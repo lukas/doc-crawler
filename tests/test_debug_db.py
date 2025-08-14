@@ -34,3 +34,35 @@ def test_debug_dependency_override(test_client):
     response = test_client.get("/health")
     assert response.status_code == 200
     print("Health endpoint works - test_client fixture is functional")
+
+
+def test_debug_api_database_session(test_client, test_engine):
+    """Debug test to see what database session the API is using"""
+    # Add a test rule to our test engine directly
+    from sqlalchemy.orm import sessionmaker
+    Session = sessionmaker(bind=test_engine)
+    session = Session()
+    try:
+        rule = Rule(
+            rule_code="DEBUG_RULE",
+            name="Debug Rule",
+            category="debug",
+            default_severity="low",
+            config={}
+        )
+        session.add(rule)
+        session.commit()
+        print("Added test rule to test database")
+    finally:
+        session.close()
+    
+    # Now try the API call
+    response = test_client.get("/api/rules")
+    print(f"API response status: {response.status_code}")
+    if response.status_code == 200:
+        data = response.json()
+        print(f"API returned {len(data)} rules")
+        if data:
+            print(f"First rule: {data[0]}")
+    else:
+        print(f"API error: {response.text}")
