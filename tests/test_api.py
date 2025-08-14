@@ -1,55 +1,10 @@
 """Tests for API endpoints"""
 
 import pytest
-import os
-from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from docsqa.backend.app import create_app
-from docsqa.backend.core.models import Base, Rule, File, AnalysisRun
+from docsqa.backend.core.models import Rule, File, AnalysisRun
 from docsqa.backend.core.models import RunStatus, RunSource
-from docsqa.backend.core.db import get_db
-
-
-# Test database setup
-@pytest.fixture
-def test_engine():
-    """Create test database engine"""
-    engine = create_engine("sqlite:///:memory:")
-    Base.metadata.create_all(engine)
-    return engine
-
-
-@pytest.fixture
-def test_session(test_engine):
-    """Create test database session"""
-    Session = sessionmaker(bind=test_engine)
-    session = Session()
-    yield session
-    session.close()
-
-
-@pytest.fixture 
-def test_client(test_engine):
-    """Create test client with test database"""
-    # Create app without lifespan to avoid init_db
-    app = create_app(with_lifespan=False)
-    
-    def get_test_db():
-        Session = sessionmaker(bind=test_engine)
-        session = Session()
-        try:
-            yield session
-        finally:
-            session.close()
-    
-    app.dependency_overrides[get_db] = get_test_db
-    
-    with TestClient(app) as client:
-        yield client
-    
-    app.dependency_overrides.clear()
 
 
 def test_health_endpoint(test_client):
@@ -79,22 +34,11 @@ def test_list_issues_empty(test_client):
     assert data["total"] == 0
 
 
-def test_list_rules_empty(test_client, test_engine):
+def test_list_rules_empty(test_client):
     """Test listing rules when none exist"""
-    # Debug: check test database directly
-    Session = sessionmaker(bind=test_engine)
-    session = Session()
-    try:
-        from docsqa.backend.core.models import Rule
-        rules_in_test_db = session.query(Rule).all()
-        print(f"DEBUG: Test DB has {len(rules_in_test_db)} rules")
-    finally:
-        session.close()
-    
     response = test_client.get("/api/rules")
     assert response.status_code == 200
     data = response.json()
-    print(f"DEBUG: API returned {len(data)} rules")
     assert data == []
 
 
