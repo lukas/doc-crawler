@@ -1,0 +1,65 @@
+repo:
+  url: https://github.com/wandb/docs.git
+  branch: main
+
+paths:
+  include:
+    - content/en/guides/**/*.md
+    - content/en/guides/**/*.mdx
+  exclude: []
+
+crawler:
+  poll_minutes: 60
+
+links:
+  timeout_ms: 4000
+  concurrency: 8
+  per_host_limit: 2
+
+versions:
+  package: wandb
+  allow_majors_behind: 0
+  allow_minors_behind: 1
+
+style:
+  require_one_h1: true
+  require_img_alt: true
+
+terminology:
+  canonical:
+    - "Weights & Biases|W&B"
+    - "Artifacts"
+
+llm:
+  provider: openai     # "openai" | "azure" | "local"
+  model: gpt-4o-mini
+  temperature: 0.1
+  max_output_tokens: 1200
+  json_mode: true
+  rate_limits:
+    rpm: 200
+    tpm: 800000
+  budgets:
+    tokens_per_run: 2000000
+
+retrieval:
+  embedding_model: text-embedding-3-small
+  index_path: .cache/faiss
+  k_neighbors: 5
+
+guardrails:
+  require_citations: true
+  allow_code_edits: false
+  max_whitespace_delta_lines: 3
+
+pr:
+  default_branch_prefix: docs/fixes
+  draft: true
+  reviewers: ["docs-maintainers"]
+
+server:
+  host: 0.0.0.0
+  port: 8080
+
+db:
+  url: postgresql+psycopg://user:pass@db:5432/docsqa
