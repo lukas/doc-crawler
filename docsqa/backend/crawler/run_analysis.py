@@ -201,8 +201,8 @@ class AnalysisRunner:
                 session.commit()
 
 
-async def main():
-    """Main entry point"""
+async def async_main():
+    """Async main entry point"""
     parser = argparse.ArgumentParser(description="Run document analysis")
     parser.add_argument("--config", help="Path to config file")
     parser.add_argument("--source", default="manual", help="Run source (manual, scheduled, webhook)")
@@ -237,5 +237,10 @@ async def main():
         return 1
 
 
+def main():
+    """Synchronous main entry point for uv script"""
+    sys.exit(asyncio.run(async_main()))
+
+
 if __name__ == "__main__":
-    sys.exit(asyncio.run(main()))
+    main()

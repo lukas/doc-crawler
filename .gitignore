@@ -13,6 +13,9 @@ venv.bak/
 pip-log.txt
 pip-delete-this-directory.txt
 
+# uv
+uv.lock
+
 # Database
 *.db
 *.sqlite

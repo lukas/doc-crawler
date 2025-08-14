@@ -17,7 +17,7 @@ A comprehensive system for automatically detecting and fixing issues in W&B docu
 
 1. **One-time setup**:
 ```bash
-# Run the setup script (installs dependencies, sets up database)
+# Run the setup script (installs uv, dependencies, sets up database)
 ./setup.sh
 
 # Set environment variables (optional)
@@ -27,26 +27,27 @@ export GITHUB_APP_ID="your-github-app-id"
 
 2. **Start the API server**:
 ```bash
-# Activate the virtual environment
-source docsqa/.venv/bin/activate
+# Using uv (recommended)
+uv run docsqa-server
 
-# Start server
-cd docsqa/backend && python app.py
+# Or manually
+source .venv/bin/activate && cd docsqa/backend && python app.py
 ```
 
 3. **Run analysis**:
 ```bash
-# Activate virtual environment (if not already active)
-source docsqa/.venv/bin/activate
+# Using uv (recommended)
+uv run docsqa-analyze --source manual --no-llm
 
 # Run full analysis (requires OpenAI API key)
-cd docsqa && python -m crawler.run_analysis --source manual
-
-# Run without LLM (rule-based only)  
-cd docsqa && python -m crawler.run_analysis --source manual --no-llm
+uv run docsqa-analyze --source manual
 
 # Debug mode
-cd docsqa && python -m crawler.run_analysis --source manual --debug
+uv run docsqa-analyze --source manual --debug
+
+# Or manually
+source .venv/bin/activate
+cd docsqa && PYTHONPATH=backend python -m crawler.run_analysis --source manual
 ```
 
 4. **View results**:
