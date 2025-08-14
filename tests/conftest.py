@@ -45,9 +45,11 @@ def test_app(test_engine):
     """Create a FastAPI test app with isolated database"""
     app = create_app(with_lifespan=False)
     
+    # Create a session factory for the test
+    TestSession = sessionmaker(bind=test_engine)
+    
     def get_test_db():
-        Session = sessionmaker(bind=test_engine)
-        session = Session()
+        session = TestSession()
         try:
             yield session
         finally:
