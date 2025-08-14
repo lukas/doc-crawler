@@ -188,6 +188,40 @@ python -m services.github_app --open-pr --issues 1,2,3 --branch docs/fixes/test
 
 ## Development
 
+### Package Management with uv
+
+This project uses [uv](https://github.com/astral-sh/uv) for fast, reliable Python package management.
+
+```bash
+# Add a new dependency
+uv add requests
+
+# Add a development dependency  
+uv add --group dev pytest
+
+# Add optional dependency
+uv add --optional embeddings faiss-cpu
+
+# Sync dependencies
+uv sync
+
+# Install with all optional dependencies
+uv sync --all-extras
+
+# Run commands in the virtual environment
+uv run python -c "import requests; print('works!')"
+
+# Run scripts defined in pyproject.toml
+uv run docsqa-server
+uv run docsqa-analyze --help
+
+# Development tools
+uv run black .           # Format code
+uv run ruff check .      # Lint code
+uv run pytest          # Run tests
+uv run mypy docsqa      # Type checking
+```
+
 ### Project Structure
 ```
 docsqa/
