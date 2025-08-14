@@ -27,43 +27,49 @@ async def lifespan(app: FastAPI):
     # Shutdown
     pass
 
-app = FastAPI(
-    title="DocsQA API",
-    description="W&B Documentation Quality Assurance System",
-    version="1.0.0",
-    lifespan=lifespan
-)
+def create_app(with_lifespan: bool = True) -> FastAPI:
+    """Create FastAPI app instance"""
+    app = FastAPI(
+        title="DocsQA API",
+        description="W&B Documentation Quality Assurance System",
+        version="1.0.0",
+        lifespan=lifespan if with_lifespan else None
+    )
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
-# Include API routers
-app.include_router(issues.router, prefix="/api", tags=["issues"])
-app.include_router(files.router, prefix="/api", tags=["files"])
-app.include_router(runs.router, prefix="/api", tags=["runs"])
-app.include_router(rules.router, prefix="/api", tags=["rules"])
-app.include_router(prs.router, prefix="/api", tags=["prs"])
+    # Include API routers
+    app.include_router(issues.router, prefix="/api", tags=["issues"])
+    app.include_router(files.router, prefix="/api", tags=["files"])
+    app.include_router(runs.router, prefix="/api", tags=["runs"])
+    app.include_router(rules.router, prefix="/api", tags=["rules"])
+    app.include_router(prs.router, prefix="/api", tags=["prs"])
 
-@app.get("/health")
-async def health_check():
-    return {
-        "status": "healthy",
-        "service": "docsqa-api",
-        "version": "1.0.0"
-    }
+    @app.get("/health")
+    async def health_check():
+        return {
+            "status": "healthy",
+            "service": "docsqa-api",
+            "version": "1.0.0"
+        }
 
-@app.get("/")
-async def root():
-    return {
-        "message": "DocsQA API",
-        "docs": "/docs",
-        "health": "/health"
-    }
+    @app.get("/")
+    async def root():
+        return {
+            "message": "DocsQA API",
+            "docs": "/docs",
+            "health": "/health"
+        }
+    
+    return app
+
+app = create_app()
 
 def main():
     """Main entry point for the server"""

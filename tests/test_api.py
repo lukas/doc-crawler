@@ -1,11 +1,12 @@
 """Tests for API endpoints"""
 
 import pytest
+import os
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from docsqa.backend.app import app
+from docsqa.backend.app import create_app
 from docsqa.backend.core.models import Base, Rule, File, AnalysisRun
 from docsqa.backend.core.models import RunStatus, RunSource
 from docsqa.backend.core.db import get_db
@@ -40,10 +41,17 @@ def test_client(test_engine):
         finally:
             session.close()
     
+    # Set test database URL to ensure isolation
+    os.environ["DATABASE_URL"] = "sqlite:///:memory:"
+    app = create_app()
     app.dependency_overrides[get_db] = get_test_db
+    
     with TestClient(app) as client:
         yield client
+    
     app.dependency_overrides.clear()
+    if "DATABASE_URL" in os.environ:
+        del os.environ["DATABASE_URL"]
 
 
 def test_health_endpoint(test_client):
