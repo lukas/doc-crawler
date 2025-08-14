@@ -1,11 +1,11 @@
 #!/bin/bash
 set -e
 
-echo "🚀 Setting up DocsQA system..."
+echo "🚀 Setting up DocsQA system with uv..."
 
 # Check if we're in the right directory
-if [ ! -f "docsqa/backend/app.py" ]; then
-    echo "❌ Please run this script from the root directory (where this setup.sh is located)"
+if [ ! -f "pyproject.toml" ]; then
+    echo "❌ Please run this script from the root directory (where pyproject.toml is located)"
     exit 1
 fi
 
@@ -13,61 +13,69 @@ fi
 if [ "$(id -u)" = "0" ]; then
     echo "🔧 Installing system dependencies..."
     apt-get update
-    apt-get install -y git curl build-essential python3-dev python3-pip python3-venv
+    apt-get install -y git curl build-essential python3-dev
     echo "✅ System dependencies installed"
 fi
 
-echo "🐍 Setting up Python environment..."
+# Install uv if not already installed
+if ! command -v uv &> /dev/null; then
+    echo "📦 Installing uv package manager..."
+    if [ "$(id -u)" = "0" ]; then
+        # Running as root (container)
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        export PATH="$HOME/.local/bin:$PATH"
+    else
+        # Non-root user
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        export PATH="$HOME/.local/bin:$PATH"
+    fi
+    echo "✅ uv installed successfully"
+else
+    echo "✅ uv already installed"
+fi
 
-# Set up Python environment
-cd docsqa
+# Ensure uv is in PATH
+if ! command -v uv &> /dev/null; then
+    export PATH="$HOME/.local/bin:$PATH"
+fi
 
-# Handle virtual environment for non-container environments
+echo "🐍 Setting up Python environment with uv..."
+
+# Create virtual environment and install dependencies
 if [ -z "$CONTAINER" ] && [ "$(id -u)" != "0" ]; then
-    echo "📦 Setting up virtual environment..."
+    echo "📦 Creating virtual environment and installing dependencies..."
     
     # Create virtual environment if it doesn't exist
     if [ ! -d ".venv" ]; then
-        python3 -m venv .venv
-        echo "✅ Created virtual environment"
+        uv venv
+        echo "✅ Created virtual environment with uv"
     fi
-    
-    # Activate virtual environment
-    source .venv/bin/activate
-    echo "✅ Activated virtual environment"
-    
-    # Upgrade pip
-    pip install --upgrade pip
     
     # Install dependencies
-    pip install -r backend/requirements.txt
+    uv sync
+    echo "✅ Dependencies installed with uv"
+    
+    # Activate virtual environment for subsequent commands
+    source .venv/bin/activate
+    PYTHON_CMD=".venv/bin/python"
+    
 else
-    # In container or as root, install system-wide
-    echo "📦 Installing Python dependencies system-wide..."
-    if [ "$(id -u)" = "0" ]; then
-        # Running as root (container), can install system-wide
-        pip install --break-system-packages -r backend/requirements.txt
-    else
-        # Not root but in container environment
-        pip install --user -r backend/requirements.txt
-    fi
+    # In container or as root, install globally
+    echo "📦 Installing Python dependencies globally with uv..."
+    uv pip install --system -e .
+    PYTHON_CMD="python3"
 fi
 
-echo "✅ Python dependencies installed"
+echo "✅ Python environment ready"
 
 # Set environment variables for development
-export PYTHONPATH="${PWD}/backend"
-export DATABASE_URL=${DATABASE_URL:-"sqlite:///dev.db"}
+export PYTHONPATH="${PWD}/docsqa/backend"
+export DATABASE_URL=${DATABASE_URL:-"sqlite:///docsqa/dev.db"}
 
 echo "🗃️  Setting up database..."
 
-# Determine which Python to use
-PYTHON_CMD="python3"
-if [ -f ".venv/bin/python" ]; then
-    PYTHON_CMD=".venv/bin/python"
-fi
-
 # Initialize database
+cd docsqa
 $PYTHON_CMD -c "
 import sys
 sys.path.insert(0, 'backend')
@@ -75,9 +83,11 @@ from core.db import init_db
 init_db()
 print('✅ Database initialized')
 "
+cd ..
 
 echo "🛠️  Seeding default rules..."
-# Seed rules
+# Seed rules  
+cd docsqa
 $PYTHON_CMD -c "
 import sys
 sys.path.insert(0, 'backend')
@@ -118,8 +128,10 @@ with db.get_session() as session:
 
 print(f'✅ Seeded {created_count} default rules')
 "
+cd ..
 
 echo "📂 Creating sample file records..."
+cd docsqa
 $PYTHON_CMD -c "
 import sys
 sys.path.insert(0, 'backend')
@@ -145,8 +157,10 @@ with db.get_session() as session:
 
 print(f'✅ Created {created_count} sample files')
 "
+cd ..
 
 echo "🏃 Creating sample analysis run..."
+cd docsqa
 $PYTHON_CMD -c "
 import sys
 sys.path.insert(0, 'backend')
@@ -172,6 +186,7 @@ with db.get_session() as session:
     else:
         print('✅ Sample run already exists')
 "
+cd ..
 
 # Create data directory for repo clones
 echo "📁 Creating data directories..."
@@ -182,12 +197,12 @@ if [ "$(id -u)" = "0" ]; then
     echo "✅ Data directories created at /data"
 else
     # Not root, create local data directory
-    mkdir -p data
-    echo "✅ Data directories created at ./data"
+    mkdir -p docsqa/data
+    echo "✅ Data directories created at ./docsqa/data"
 fi
 
 echo ""
-echo "🎉 DocsQA setup completed successfully!"
+echo "🎉 DocsQA setup completed successfully with uv!"
 echo ""
 echo "📋 Next steps:"
 echo "  1. Set environment variables (optional):"
@@ -195,13 +210,23 @@ echo "     export OPENAI_API_KEY=\"your-openai-key\""
 echo "     export GITHUB_APP_ID=\"your-github-app-id\""
 echo ""  
 echo "  2. Start the API server:"
-echo "     source .venv/bin/activate"
-echo "     cd backend && python app.py"
+echo "     uv run docsqa-server"
+echo "     # OR manually:"
+echo "     source .venv/bin/activate && cd docsqa/backend && python app.py"
 echo ""
 echo "  3. Run analysis (in another terminal):"
-echo "     source .venv/bin/activate"
-echo "     python -m crawler.run_analysis --source manual"
+echo "     uv run docsqa-analyze --source manual --no-llm"
+echo "     # OR manually:"
+echo "     source .venv/bin/activate && cd docsqa && PYTHONPATH=backend python -m crawler.run_analysis --source manual"
 echo ""
 echo "  4. Access the API:"
 echo "     http://localhost:8080/docs (API documentation)"
 echo "     http://localhost:8080/health (health check)"
+echo ""
+echo "💡 Development commands:"
+echo "     uv add <package>              # Add a new dependency"
+echo "     uv add --group dev <package>  # Add a dev dependency"
+echo "     uv sync                       # Sync dependencies"
+echo "     uv run pytest                 # Run tests"
+echo "     uv run black .                # Format code"
+echo "     uv run ruff check .           # Lint code"

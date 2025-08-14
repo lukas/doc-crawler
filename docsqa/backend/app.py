@@ -65,12 +65,16 @@ async def root():
         "health": "/health"
     }
 
-if __name__ == "__main__":
+def main():
+    """Main entry point for the server"""
     import uvicorn
     config = settings.config
     uvicorn.run(
-        "app:app", 
+        "docsqa.backend.app:app", 
         host=config.server.host, 
         port=config.server.port, 
         reload=True
     )
+
+if __name__ == "__main__":
+    main()
