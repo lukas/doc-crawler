@@ -62,4 +62,4 @@ server:
   port: 8080
 
 db:
-  url: sqlite:///dev.db
+  url: sqlite:///./dev.db

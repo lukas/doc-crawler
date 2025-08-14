@@ -70,7 +70,7 @@ echo "✅ Python environment ready"
 
 # Set environment variables for development
 export PYTHONPATH="${PWD}/docsqa/backend"
-export DATABASE_URL=${DATABASE_URL:-"sqlite:///dev.db"}
+export DATABASE_URL=${DATABASE_URL:-"sqlite:///${PWD}/dev.db"}
 
 echo "🗃️  Setting up database..."
 
