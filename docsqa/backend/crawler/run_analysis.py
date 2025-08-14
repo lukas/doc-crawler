@@ -70,7 +70,7 @@ class AnalysisRunner:
         init_db()
         
         # Create analysis run record
-        with db.get_session() as session:
+        with db().get_session() as session:
             run = AnalysisRun(
                 commit_sha=commit_sha or "",
                 source=RunSource(source),
@@ -91,7 +91,7 @@ class AnalysisRunner:
                 commit_sha = repo_info['current_commit']
             
             # Update run with actual commit SHA
-            with db.get_session() as session:
+            with db().get_session() as session:
                 run = session.query(AnalysisRun).filter(AnalysisRun.id == run_id).first()
                 run.commit_sha = commit_sha
                 session.commit()
@@ -178,7 +178,7 @@ class AnalysisRunner:
     async def _mark_run_completed(self, run_id: int, stats: Dict[str, Any], 
                                  llm_token_in: int = 0, llm_token_out: int = 0):
         """Mark analysis run as completed"""
-        with db.get_session() as session:
+        with db().get_session() as session:
             run = session.query(AnalysisRun).filter(AnalysisRun.id == run_id).first()
             if run:
                 run.status = RunStatus.SUCCESS
@@ -192,7 +192,7 @@ class AnalysisRunner:
     
     async def _mark_run_failed(self, run_id: int, error_message: str):
         """Mark analysis run as failed"""
-        with db.get_session() as session:
+        with db().get_session() as session:
             run = session.query(AnalysisRun).filter(AnalysisRun.id == run_id).first()
             if run:
                 run.status = RunStatus.FAILED
