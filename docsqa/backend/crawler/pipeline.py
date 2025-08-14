@@ -2,17 +2,17 @@ import logging
 from typing import List, Dict, Any, Optional, Tuple
 import asyncio
 
-from ..core.mdx_parse import MDXDocument
-from ..core.chunker import DocumentChunk
-from ..core.schemas import IssueCreate, LLMSuggestion, Citation
-from ..core.models import Issue
-from ..core.db import db
-from ..core.verifier import Verifier
-from ..core.patches import create_unified_diff
-from ..core.catalogs import catalog_loader
-from ..core.version_resolver import VersionResolver
-from ..services.llm_client import LLMClient
-from ..services.embeddings import EmbeddingService
+from core.mdx_parse import MDXDocument
+from core.chunker import DocumentChunk
+from core.schemas import IssueCreate, LLMSuggestion, Citation
+from core.models import Issue
+from core.db import db
+from core.verifier import Verifier
+from core.patches import create_unified_diff
+from core.catalogs import catalog_loader
+from core.version_resolver import VersionResolver
+from services.llm_client import LLMClient
+from services.embeddings import EmbeddingService
 
 # Import analyzers
 from .analyzers.rule_links import analyze_links

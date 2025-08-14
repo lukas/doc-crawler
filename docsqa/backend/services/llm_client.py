@@ -9,8 +9,8 @@ import httpx
 from tenacity import retry, stop_after_attempt, wait_exponential
 from pydantic import BaseModel, ValidationError
 
-from ..core.schemas import LLMResponse, LLMSuggestion, Citation
-from ..core.config import get_openai_api_key
+from core.schemas import LLMResponse, LLMSuggestion, Citation
+from core.config import get_openai_api_key
 
 logger = logging.getLogger(__name__)
 

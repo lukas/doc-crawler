@@ -10,15 +10,17 @@ try:
     import numpy as np
     import faiss
     FAISS_AVAILABLE = True
+    NDArray = np.ndarray
 except ImportError:
     FAISS_AVAILABLE = False
     np = None
     faiss = None
+    NDArray = Any  # Fallback type
 
 import openai
 
-from ..core.config import get_openai_api_key
-from ..core.chunker import DocumentChunk
+from core.config import get_openai_api_key
+from core.chunker import DocumentChunk
 
 logger = logging.getLogger(__name__)
 

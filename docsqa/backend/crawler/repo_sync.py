@@ -4,10 +4,10 @@ from typing import List, Dict, Any, Optional
 from pathlib import Path
 import fnmatch
 
-from ..core.config import Config
-from ..core.git_utils import GitRepository
-from ..core.models import File, AnalysisRun
-from ..core.db import db
+from core.config import Config
+from core.git_utils import GitRepository
+from core.models import File, AnalysisRun
+from core.db import db
 
 logger = logging.getLogger(__name__)
 
