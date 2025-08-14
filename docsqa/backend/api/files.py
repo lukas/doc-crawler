@@ -3,9 +3,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func, or_
 
-from ..core.db import get_db
-from ..core.models import File, Issue
-from ..core.schemas import FileResponse, FileDetail, PaginatedResponse
+from core.db import get_db
+from core.models import File, Issue
+from core.schemas import FileResponse, FileDetail, PaginatedResponse
 
 router = APIRouter()
 

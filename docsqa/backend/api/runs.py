@@ -4,9 +4,9 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func, desc
 from datetime import datetime
 
-from ..core.db import get_db
-from ..core.models import AnalysisRun, Issue, RunStatus, RunSource
-from ..core.schemas import AnalysisRunResponse, AnalysisRunCreate
+from core.db import get_db
+from core.models import AnalysisRun, Issue, RunStatus, RunSource
+from core.schemas import AnalysisRunResponse, AnalysisRunCreate
 
 router = APIRouter()
 
@@ -161,11 +161,11 @@ async def trigger_run(
 async def run_analysis_task(run_id: int):
     """Background task to run the analysis"""
     # TODO: Import and call the actual crawler
-    # from ..crawler.run_analysis import run_full_analysis
+    # from crawler.run_analysis import run_full_analysis
     # await run_full_analysis(run_id)
     
     # For now, just mark as completed
-    from ..core.db import db
+    from core.db import db
     with db.get_session() as session:
         run = session.query(AnalysisRun).filter(AnalysisRun.id == run_id).first()
         if run:

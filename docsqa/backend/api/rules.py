@@ -2,9 +2,9 @@ from typing import List, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from ..core.db import get_db
-from ..core.models import Rule
-from ..core.schemas import RuleResponse, RuleUpdate
+from core.db import get_db
+from core.models import Rule
+from core.schemas import RuleResponse, RuleUpdate
 
 router = APIRouter()
 

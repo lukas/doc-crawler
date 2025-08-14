@@ -3,9 +3,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_
 
-from ..core.db import get_db
-from ..core.models import Issue, File, AnalysisRun
-from ..core.schemas import (
+from core.db import get_db
+from core.models import Issue, File, AnalysisRun
+from core.schemas import (
     IssueResponse, IssueDetail, IssueUpdate, IssueFilters, 
     PaginatedResponse, BulkIssueUpdate, IssueState
 )
