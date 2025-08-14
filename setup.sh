@@ -120,7 +120,6 @@ print(f'✅ Seeded {created_count} default rules')
 "
 
 echo "📂 Creating sample file records..."
-cd docsqa
 $PYTHON_CMD -c "
 import sys
 sys.path.insert(0, 'backend')
@@ -146,10 +145,8 @@ with db.get_session() as session:
 
 print(f'✅ Created {created_count} sample files')
 "
-cd ..
 
 echo "🏃 Creating sample analysis run..."
-cd docsqa
 $PYTHON_CMD -c "
 import sys
 sys.path.insert(0, 'backend')
@@ -175,7 +172,6 @@ with db.get_session() as session:
     else:
         print('✅ Sample run already exists')
 "
-cd ..
 
 # Create data directory for repo clones
 echo "📁 Creating data directories..."
@@ -199,12 +195,12 @@ echo "     export OPENAI_API_KEY=\"your-openai-key\""
 echo "     export GITHUB_APP_ID=\"your-github-app-id\""
 echo ""  
 echo "  2. Start the API server:"
-echo "     source docsqa/.venv/bin/activate"
-echo "     cd docsqa/backend && python app.py"
+echo "     source .venv/bin/activate"
+echo "     cd backend && python app.py"
 echo ""
 echo "  3. Run analysis (in another terminal):"
-echo "     source docsqa/.venv/bin/activate"
-echo "     cd docsqa && python -m crawler.run_analysis --source manual"
+echo "     source .venv/bin/activate"
+echo "     python -m crawler.run_analysis --source manual"
 echo ""
 echo "  4. Access the API:"
 echo "     http://localhost:8080/docs (API documentation)"
