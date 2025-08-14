@@ -48,10 +48,14 @@ class AnalysisRunner:
                 json_mode=self.config.llm.json_mode
             )
             
-            self.embedding_service = get_embedding_service(
-                model_name=self.config.retrieval.embedding_model,
-                index_path=self.config.retrieval.index_path
-            )
+            try:
+                self.embedding_service = get_embedding_service(
+                    model_name=self.config.retrieval.embedding_model,
+                    index_path=self.config.retrieval.index_path
+                )
+            except ImportError as e:
+                logger.warning(f"FAISS not available, disabling embeddings: {e}")
+                self.embedding_service = None
         else:
             self.llm_client = None
             self.embedding_service = None

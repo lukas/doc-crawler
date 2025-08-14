@@ -35,6 +35,9 @@ class EmbeddingService:
     
     def __init__(self, model_name: str = "text-embedding-3-small", 
                  index_path: str = ".cache/faiss", dimensions: int = 1536):
+        if not FAISS_AVAILABLE:
+            raise ImportError("FAISS and numpy are required for embeddings. Install with: pip install faiss-cpu numpy")
+        
         self.model_name = model_name
         self.index_path = Path(index_path)
         self.dimensions = dimensions
