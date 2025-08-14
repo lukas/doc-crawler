@@ -43,7 +43,7 @@ def test_client(test_engine):
     
     # Set test database URL to ensure isolation
     os.environ["DATABASE_URL"] = "sqlite:///:memory:"
-    app = create_app()
+    app = create_app(with_lifespan=False)
     app.dependency_overrides[get_db] = get_test_db
     
     with TestClient(app) as client:
