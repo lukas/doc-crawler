@@ -1,0 +1,218 @@
+[project]
+name = "docsqa"
+version = "1.0.0"
+description = "W&B Documentation Quality Assurance System - Comprehensive tool for automated documentation analysis, issue detection, and PR generation with LLM-powered suggestions"
+readme = "docsqa/README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "DocsQA Contributors" }
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Documentation",
+    "Topic :: Software Development :: Quality Assurance",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "pydantic>=2.5.0",
+    "python-dotenv>=1.0.0",
+    "sqlalchemy>=2.0.0",
+    "alembic>=1.13.0",
+    "httpx>=0.25.0",
+    "aiofiles>=23.2.0",
+    "PyYAML>=6.0.0",
+    "markdown>=3.5.0",
+    "python-frontmatter>=1.0.0",
+    "GitPython>=3.1.0",
+    "PyGithub>=1.59.0",
+    "openai>=1.3.0",
+    "tiktoken>=0.5.0",
+    "Pygments>=2.17.0",
+    "beautifulsoup4>=4.12.0",
+    "PyJWT>=2.8.0",
+    "tenacity>=8.2.0",
+    "python-multipart>=0.0.6",
+    "packaging>=21.0",
+]
+
+[project.optional-dependencies]
+embeddings = [
+    "faiss-cpu>=1.7.0",
+    "numpy>=1.24.0",
+]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.7.0",
+    "ruff>=0.0.284",
+    "mypy>=1.5.0",
+    "pre-commit>=3.3.0",
+]
+test = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "httpx>=0.25.0",  # For TestClient
+]
+
+[project.urls]
+Homepage = "https://github.com/lukas/doc-crawler"
+Repository = "https://github.com/lukas/doc-crawler"
+Issues = "https://github.com/lukas/doc-crawler/issues"
+Documentation = "https://github.com/lukas/doc-crawler/blob/main/docsqa/README.md"
+
+[project.scripts]
+docsqa-server = "docsqa.backend.app:main"
+docsqa-analyze = "docsqa.backend.crawler.run_analysis:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["docsqa"]
+
+[tool.black]
+line-length = 100
+target-version = ['py310', 'py311', 'py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+  | migrations/versions
+)/
+'''
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+]
+ignore = [
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
+    "W191",  # indentation contains tabs
+]
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "migrations/versions",
+]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.mypy]
+python_version = "3.10"
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = true
+strict_equality = true
+exclude = [
+    "migrations/versions/",
+    "build/",
+    "dist/",
+]
+
+[[tool.mypy.overrides]]
+module = [
+    "faiss.*",
+    "frontmatter.*",
+    "git.*",
+    "github.*",
+    "tiktoken.*",
+    "pygments.*",
+    "bs4.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q --strict-markers --strict-config"
+testpaths = [
+    "tests",
+    "docsqa/backend/tests",
+]
+python_files = [
+    "test_*.py",
+    "*_test.py",
+    "tests.py",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+]
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+source = ["docsqa"]
+omit = [
+    "*/migrations/*",
+    "*/tests/*",
+    "*/venv/*",
+    "*/.venv/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
