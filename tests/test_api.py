@@ -59,23 +59,18 @@ def test_list_runs_empty(test_client):
     assert data == []
 
 
-def test_list_rules_with_data(test_client, test_engine):
+def test_list_rules_with_data(test_client, test_session):
     """Test listing rules with sample data"""
-    # Add test rule to the test database
-    Session = sessionmaker(bind=test_engine)
-    session = Session()
-    try:
-        rule = Rule(
-            rule_code="TEST_RULE",
-            name="Test Rule",
-            category="test",
-            default_severity="high",
-            config={}
-        )
-        session.add(rule)
-        session.commit()
-    finally:
-        session.close()
+    # Add test rule
+    rule = Rule(
+        rule_code="TEST_RULE",
+        name="Test Rule",
+        category="test",
+        default_severity="high",
+        config={}
+    )
+    test_session.add(rule)
+    test_session.commit()
     
     response = test_client.get("/api/rules")
     assert response.status_code == 200
@@ -85,23 +80,18 @@ def test_list_rules_with_data(test_client, test_engine):
     assert data[0]["name"] == "Test Rule"
 
 
-def test_list_files_with_data(test_client, test_engine):
+def test_list_files_with_data(test_client, test_session):
     """Test listing files with sample data"""
-    # Add test file to the test database
-    Session = sessionmaker(bind=test_engine)
-    session = Session()
-    try:
-        file_record = File(
-            path="test/file.md",
-            title="Test File",
-            sha="abc123",
-            last_seen_commit="main",
-            status="active"
-        )
-        session.add(file_record)
-        session.commit()
-    finally:
-        session.close()
+    # Add test file
+    file_record = File(
+        path="test/file.md",
+        title="Test File",
+        sha="abc123",
+        last_seen_commit="main",
+        status="active"
+    )
+    test_session.add(file_record)
+    test_session.commit()
     
     response = test_client.get("/api/files")
     assert response.status_code == 200
@@ -112,22 +102,17 @@ def test_list_files_with_data(test_client, test_engine):
     assert data["items"][0]["title"] == "Test File"
 
 
-def test_list_runs_with_data(test_client, test_engine):
+def test_list_runs_with_data(test_client, test_session):
     """Test listing runs with sample data"""
-    # Add test run to the test database
-    Session = sessionmaker(bind=test_engine)
-    session = Session()
-    try:
-        run = AnalysisRun(
-            commit_sha="abc123",
-            source=RunSource.MANUAL,
-            status=RunStatus.SUCCESS,
-            stats={"files_analyzed": 5}
-        )
-        session.add(run)
-        session.commit()
-    finally:
-        session.close()
+    # Add test run
+    run = AnalysisRun(
+        commit_sha="abc123",
+        source=RunSource.MANUAL,
+        status=RunStatus.SUCCESS,
+        stats={"files_analyzed": 5}
+    )
+    test_session.add(run)
+    test_session.commit()
     
     response = test_client.get("/api/runs")
     assert response.status_code == 200
