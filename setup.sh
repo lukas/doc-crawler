@@ -63,7 +63,9 @@ echo "🗃️  Setting up database..."
 
 # Determine which Python to use
 PYTHON_CMD="python3"
-if [ -f ".venv/bin/python" ]; then
+if [ -f "docsqa/.venv/bin/python" ]; then
+    PYTHON_CMD="docsqa/.venv/bin/python"
+elif [ -f ".venv/bin/python" ]; then
     PYTHON_CMD=".venv/bin/python"
 fi
 
@@ -80,6 +82,7 @@ cd ..
 
 echo "🛠️  Seeding default rules..."
 # Seed rules
+cd docsqa
 $PYTHON_CMD -c "
 import sys
 sys.path.insert(0, 'backend')
@@ -120,8 +123,10 @@ with db.get_session() as session:
 
 print(f'✅ Seeded {created_count} default rules')
 "
+cd ..
 
 echo "📂 Creating sample file records..."
+cd docsqa
 $PYTHON_CMD -c "
 import sys
 sys.path.insert(0, 'backend')
@@ -147,8 +152,10 @@ with db.get_session() as session:
 
 print(f'✅ Created {created_count} sample files')
 "
+cd ..
 
 echo "🏃 Creating sample analysis run..."
+cd docsqa
 $PYTHON_CMD -c "
 import sys
 sys.path.insert(0, 'backend')
@@ -174,6 +181,7 @@ with db.get_session() as session:
     else:
         print('✅ Sample run already exists')
 "
+cd ..
 
 # Create data directory for repo clones
 echo "📁 Creating data directories..."
