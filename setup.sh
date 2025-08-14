@@ -17,10 +17,10 @@ if [ "$(id -u)" = "0" ]; then
     echo "✅ System dependencies installed"
 fi
 
+echo "🐍 Setting up Python environment..."
+
 # Set up Python environment
 cd docsqa
-
-echo "🐍 Setting up Python environment..."
 
 # Handle virtual environment for non-container environments
 if [ -z "$CONTAINER" ] && [ "$(id -u)" != "0" ]; then
