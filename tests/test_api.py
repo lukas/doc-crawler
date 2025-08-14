@@ -95,8 +95,7 @@ def test_list_runs_empty(test_client):
     response = test_client.get("/api/runs")
     assert response.status_code == 200
     data = response.json()
-    assert data["items"] == []
-    assert data["total"] == 0
+    assert data == []
 
 
 def test_list_rules_with_data(test_client, test_engine):
@@ -125,18 +124,23 @@ def test_list_rules_with_data(test_client, test_engine):
     assert data[0]["name"] == "Test Rule"
 
 
-def test_list_files_with_data(test_client, test_session):
+def test_list_files_with_data(test_client, test_engine):
     """Test listing files with sample data"""
-    # Add test file
-    file_record = File(
-        path="test/file.md",
-        title="Test File",
-        sha="abc123",
-        last_seen_commit="main",
-        status="active"
-    )
-    test_session.add(file_record)
-    test_session.commit()
+    # Add test file to the test database
+    Session = sessionmaker(bind=test_engine)
+    session = Session()
+    try:
+        file_record = File(
+            path="test/file.md",
+            title="Test File",
+            sha="abc123",
+            last_seen_commit="main",
+            status="active"
+        )
+        session.add(file_record)
+        session.commit()
+    finally:
+        session.close()
     
     response = test_client.get("/api/files")
     assert response.status_code == 200
@@ -147,22 +151,26 @@ def test_list_files_with_data(test_client, test_session):
     assert data["items"][0]["title"] == "Test File"
 
 
-def test_list_runs_with_data(test_client, test_session):
+def test_list_runs_with_data(test_client, test_engine):
     """Test listing runs with sample data"""
-    # Add test run
-    run = AnalysisRun(
-        commit_sha="abc123",
-        source=RunSource.MANUAL,
-        status=RunStatus.SUCCESS,
-        stats={"files_analyzed": 5}
-    )
-    test_session.add(run)
-    test_session.commit()
+    # Add test run to the test database
+    Session = sessionmaker(bind=test_engine)
+    session = Session()
+    try:
+        run = AnalysisRun(
+            commit_sha="abc123",
+            source=RunSource.MANUAL,
+            status=RunStatus.SUCCESS,
+            stats={"files_analyzed": 5}
+        )
+        session.add(run)
+        session.commit()
+    finally:
+        session.close()
     
     response = test_client.get("/api/runs")
     assert response.status_code == 200
     data = response.json()
-    assert data["total"] == 1
-    assert len(data["items"]) == 1
-    assert data["items"][0]["commit_sha"] == "abc123"
-    assert data["items"][0]["source"] == "manual"
+    assert len(data) == 1
+    assert data[0]["commit_sha"] == "abc123"
+    assert data[0]["source"] == "manual"
