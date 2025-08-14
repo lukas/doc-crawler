@@ -1,4 +1,5 @@
 import logging
+import os
 from typing import List, Dict, Any, Optional
 from pathlib import Path
 import fnmatch
@@ -16,7 +17,11 @@ class RepositorySync:
     
     def __init__(self, config: Config):
         self.config = config
-        self.repo_path = Path("/data/repo")  # Standard location for cloned repo
+        # Use /data for containers (root), local data dir otherwise
+        if Path("/data").exists() and os.access("/data", os.W_OK):
+            self.repo_path = Path("/data/repo")
+        else:
+            self.repo_path = Path("data/repo")
         self.repo = GitRepository(
             str(self.repo_path),
             config.repo.url,

@@ -175,9 +175,16 @@ with db.get_session() as session:
 
 # Create data directory for repo clones
 echo "📁 Creating data directories..."
-mkdir -p /data
-chmod 777 /data
-echo "✅ Data directories created"
+if [ "$(id -u)" = "0" ]; then
+    # Running as root, can create /data
+    mkdir -p /data
+    chmod 777 /data
+    echo "✅ Data directories created at /data"
+else
+    # Not root, create local data directory
+    mkdir -p data
+    echo "✅ Data directories created at ./data"
+fi
 
 echo ""
 echo "🎉 DocsQA setup completed successfully!"
