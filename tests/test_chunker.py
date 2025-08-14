@@ -34,7 +34,7 @@ This is section 2 content.
     
     # Each chunk should have required fields
     for chunk in chunks:
-        assert chunk.id is not None
+        assert chunk.chunk_id is not None
         assert chunk.file_path == "test.md"
         assert chunk.content is not None
         assert chunk.start_line >= 1

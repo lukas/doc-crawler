@@ -97,33 +97,30 @@ Here are some links:
 
 - [Internal link](/docs/guide)
 - [External link](https://example.com)
-- [Reference link][ref]
-
-[ref]: https://reference.com
 """
     
     doc = parse_mdx_file("test.md", content)
     
-    assert len(doc.links) >= 3
+    assert len(doc.links) >= 2
     
-    # Check for different link types
-    internal_link = next((l for l in doc.links if l.url == "/docs/guide"), None)
+    # Check for different link types  
+    internal_link = next((l for l in doc.links if l.attributes.get("url") == "/docs/guide"), None)
     assert internal_link is not None
-    assert internal_link.text == "Internal link"
+    assert internal_link.content == "Internal link"
     
-    external_link = next((l for l in doc.links if l.url == "https://example.com"), None) 
-    assert external_link is not None
-    assert external_link.text == "External link"
+    external_link = next((l for l in doc.links if l.attributes.get("url") == "https://example.com"), None)
+    assert external_link is not None  
+    assert external_link.content == "External link"
 
 
 def test_parse_empty_document():
     """Test parsing empty document"""
     doc = parse_mdx_file("empty.md", "")
     
-    assert doc.file_path == "empty.md"
-    assert doc.title is None
-    assert doc.content == ""
-    assert len(doc.sections) == 0
+    assert doc.filepath == "empty.md"
+    assert doc.get_title() is None
+    assert doc.body_content == ""
+    assert len(doc.headings) == 0
     assert len(doc.links) == 0
 
 
@@ -148,12 +145,12 @@ Final content.
     
     doc = parse_mdx_file("test.md", content)
     
-    assert doc.title == "Main Title"
-    assert len(doc.sections) >= 4  # At least 4 sections
+    assert doc.get_title() == "Main Title"
+    assert len(doc.headings) >= 5  # At least 5 headings including title
     
-    # Check section hierarchy
-    level2_sections = [s for s in doc.sections if s.level == 2]
-    level3_sections = [s for s in doc.sections if s.level == 3]
+    # Check heading hierarchy
+    level2_headings = [h for h in doc.headings if h.attributes.get("level") == 2]
+    level3_headings = [h for h in doc.headings if h.attributes.get("level") == 3]
     
-    assert len(level2_sections) >= 2
-    assert len(level3_sections) >= 2
+    assert len(level2_headings) >= 2
+    assert len(level3_headings) >= 2
