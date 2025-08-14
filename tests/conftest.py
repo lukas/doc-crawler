@@ -19,7 +19,11 @@ from docsqa.backend.app import create_app
 @pytest.fixture(scope="function")
 def test_engine():
     """Create a test database engine for each test"""
-    engine = create_engine("sqlite:///:memory:", echo=False)
+    engine = create_engine(
+        "sqlite:///:memory:", 
+        echo=False,
+        connect_args={"check_same_thread": False}
+    )
     Base.metadata.create_all(engine)
     yield engine
     engine.dispose()
