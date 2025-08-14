@@ -12,7 +12,7 @@ os.environ["TESTING"] = "1"
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
 
 from docsqa.backend.core.models import Base
-from docsqa.backend.core.db import get_db
+from docsqa.backend.core import db as db_module
 from docsqa.backend.app import create_app
 
 
@@ -43,6 +43,9 @@ def test_session(test_engine):
 @pytest.fixture(scope="function")
 def test_app(test_engine):
     """Create a FastAPI test app with isolated database"""
+    # Reset the global database instance to ensure clean state
+    reset_db_instance()
+    
     app = create_app(with_lifespan=False)
     
     # Create a session factory for the test
@@ -58,6 +61,9 @@ def test_app(test_engine):
     app.dependency_overrides[get_db] = get_test_db
     yield app
     app.dependency_overrides.clear()
+    
+    # Reset again after the test
+    reset_db_instance()
 
 
 @pytest.fixture(scope="function")
