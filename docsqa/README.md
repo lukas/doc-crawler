@@ -15,20 +15,29 @@ A comprehensive system for automatically detecting and fixing issues in W&B docu
 
 ### Development Setup
 
-1. **Clone and setup**:
+1. **Initial setup**:
 ```bash
-# Set up environment
+# Set up virtual environment and dependencies
+./scripts/setup.sh
+
+# Set environment variables
 export OPENAI_API_KEY="your-openai-key"
 export DATABASE_URL="sqlite:///dev.db"  # or PostgreSQL for production
 
 # Seed development database
 ./scripts/dev_seed.sh
+```
 
-# Start the API server
+2. **Start the API server**:
+```bash
+# Activate virtual environment (if not already active)
+source .venv/bin/activate
+
+# Start server
 cd backend && python app.py
 ```
 
-2. **Run analysis**:
+3. **Run analysis**:
 ```bash
 # Run full analysis (requires OpenAI API key)
 ./scripts/run_once.sh
@@ -40,7 +49,7 @@ cd backend && python app.py
 ./scripts/run_once.sh --debug
 ```
 
-3. **View results**:
+4. **View results**:
 - API docs: http://localhost:8080/docs
 - Health check: http://localhost:8080/health
 
