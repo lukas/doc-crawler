@@ -13,6 +13,12 @@ fi
 export PYTHONPATH="${PWD}/backend"
 export DATABASE_URL=${DATABASE_URL:-"sqlite:///dev.db"}
 
+# Check if we're in a virtual environment, activate if not
+if [ -z "$VIRTUAL_ENV" ] && [ -d ".venv" ]; then
+    echo "🐍 Activating virtual environment..."
+    source .venv/bin/activate
+fi
+
 # Parse command line arguments
 SOURCE="manual"
 NO_LLM=false

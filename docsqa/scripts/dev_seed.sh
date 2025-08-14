@@ -16,6 +16,26 @@ export PYTHONPATH="${PWD}/backend"
 cd backend
 
 echo "📦 Installing dependencies..."
+
+# Check if we're in a virtual environment
+if [ -z "$VIRTUAL_ENV" ]; then
+    echo "⚠️  Not in a virtual environment. Creating one..."
+    
+    # Create virtual environment if it doesn't exist
+    if [ ! -d ".venv" ]; then
+        python3 -m venv .venv
+        echo "✅ Created virtual environment at .venv"
+    fi
+    
+    # Activate virtual environment
+    source .venv/bin/activate
+    echo "✅ Activated virtual environment"
+    
+    # Upgrade pip
+    pip install --upgrade pip
+fi
+
+# Install dependencies
 pip install -r requirements.txt
 
 echo "🗃️  Setting up database..."
