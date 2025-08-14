@@ -69,6 +69,17 @@ def test_file_model(test_session):
 
 def test_issue_model(test_session):
     """Test Issue model with relationships"""
+    # Create a rule first
+    rule = Rule(
+        rule_code="TEST_ISSUE",
+        name="Test Issue Rule",
+        category="test",
+        default_severity="high",
+        config={}
+    )
+    test_session.add(rule)
+    test_session.flush()
+    
     # Create a file first
     file_record = File(
         path="test/file.md",

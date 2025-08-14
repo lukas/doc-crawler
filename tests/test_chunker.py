@@ -34,11 +34,11 @@ This is section 2 content.
     
     # Each chunk should have required fields
     for chunk in chunks:
-        assert chunk.chunk_id is not None
-        assert chunk.file_path == "test.md"
-        assert chunk.content is not None
-        assert chunk.start_line >= 1
-        assert chunk.end_line >= chunk.start_line
+        assert hasattr(chunk, 'chunk_id') and chunk.chunk_id is not None
+        assert hasattr(chunk, 'file_path') and chunk.file_path == "test.md"
+        assert hasattr(chunk, 'content') and chunk.content is not None
+        assert hasattr(chunk, 'start_line') and chunk.start_line >= 1
+        assert hasattr(chunk, 'end_line') and chunk.end_line >= chunk.start_line
 
 
 def test_chunk_by_headings(chunker):

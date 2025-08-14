@@ -33,7 +33,10 @@ def test_session(test_engine):
 def test_client(test_session):
     """Create test client with test database"""
     def get_test_db():
-        return test_session
+        try:
+            yield test_session
+        finally:
+            pass
     
     app.dependency_overrides[get_db] = get_test_db
     client = TestClient(app)
