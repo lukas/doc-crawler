@@ -53,16 +53,37 @@ class Database:
             session.close()
 
 
-# Global database instance
-db = Database()
+# Global database instance - lazy initialization
+_db_instance = None
+
+
+def get_database_instance() -> Database:
+    """Get the global database instance, creating it if needed"""
+    global _db_instance
+    if _db_instance is None:
+        _db_instance = Database()
+    return _db_instance
 
 
 def get_db() -> Generator[Session, None, None]:
     """Dependency for FastAPI endpoints"""
+    db = get_database_instance()
     with db.get_session() as session:
         yield session
 
 
+# Legacy compatibility - use function instead of direct access
+def db():
+    return get_database_instance()
+
+
 def init_db():
     """Initialize database with tables"""
-    db.create_tables()
+    database = get_database_instance()
+    database.create_tables()
+
+
+def reset_db_instance():
+    """Reset the global database instance (for testing)"""
+    global _db_instance
+    _db_instance = None
