@@ -22,9 +22,37 @@ cd docsqa
 
 echo "🐍 Setting up Python environment..."
 
-# Install Python dependencies
-echo "📦 Installing Python dependencies..."
-pip install -r backend/requirements.txt
+# Handle virtual environment for non-container environments
+if [ -z "$CONTAINER" ] && [ "$(id -u)" != "0" ]; then
+    echo "📦 Setting up virtual environment..."
+    
+    # Create virtual environment if it doesn't exist
+    if [ ! -d ".venv" ]; then
+        python3 -m venv .venv
+        echo "✅ Created virtual environment"
+    fi
+    
+    # Activate virtual environment
+    source .venv/bin/activate
+    echo "✅ Activated virtual environment"
+    
+    # Upgrade pip
+    pip install --upgrade pip
+    
+    # Install dependencies
+    pip install -r backend/requirements.txt
+else
+    # In container or as root, install system-wide
+    echo "📦 Installing Python dependencies system-wide..."
+    if [ "$(id -u)" = "0" ]; then
+        # Running as root (container), can install system-wide
+        pip install --break-system-packages -r backend/requirements.txt
+    else
+        # Not root but in container environment
+        pip install --user -r backend/requirements.txt
+    fi
+fi
+
 echo "✅ Python dependencies installed"
 
 # Set environment variables for development
@@ -32,8 +60,15 @@ export PYTHONPATH="${PWD}/backend"
 export DATABASE_URL=${DATABASE_URL:-"sqlite:///dev.db"}
 
 echo "🗃️  Setting up database..."
+
+# Determine which Python to use
+PYTHON_CMD="python3"
+if [ -f ".venv/bin/python" ]; then
+    PYTHON_CMD=".venv/bin/python"
+fi
+
 # Initialize database
-python3 -c "
+$PYTHON_CMD -c "
 import sys
 sys.path.insert(0, 'backend')
 from core.db import init_db
@@ -43,7 +78,7 @@ print('✅ Database initialized')
 
 echo "🛠️  Seeding default rules..."
 # Seed rules
-python3 -c "
+$PYTHON_CMD -c "
 import sys
 sys.path.insert(0, 'backend')
 import asyncio
@@ -85,7 +120,7 @@ print(f'✅ Seeded {created_count} default rules')
 "
 
 echo "📂 Creating sample file records..."
-python3 -c "
+$PYTHON_CMD -c "
 import sys
 sys.path.insert(0, 'backend')
 from core.db import db
@@ -112,7 +147,7 @@ print(f'✅ Created {created_count} sample files')
 "
 
 echo "🏃 Creating sample analysis run..."
-python3 -c "
+$PYTHON_CMD -c "
 import sys
 sys.path.insert(0, 'backend')
 from core.db import db
