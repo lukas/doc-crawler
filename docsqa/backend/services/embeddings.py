@@ -3,11 +3,19 @@ import pickle
 import logging
 from typing import List, Dict, Any, Optional, Tuple
 from pathlib import Path
-import numpy as np
-import faiss
-import openai
 import hashlib
 from dataclasses import dataclass
+
+try:
+    import numpy as np
+    import faiss
+    FAISS_AVAILABLE = True
+except ImportError:
+    FAISS_AVAILABLE = False
+    np = None
+    faiss = None
+
+import openai
 
 from ..core.config import get_openai_api_key
 from ..core.chunker import DocumentChunk
