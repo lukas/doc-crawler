@@ -30,17 +30,19 @@ def test_session(test_engine):
 
 
 @pytest.fixture
-def test_client(test_session):
+def test_client(test_engine):
     """Create test client with test database"""
     def get_test_db():
+        Session = sessionmaker(bind=test_engine)
+        session = Session()
         try:
-            yield test_session
+            yield session
         finally:
-            pass
+            session.close()
     
     app.dependency_overrides[get_db] = get_test_db
-    client = TestClient(app)
-    yield client
+    with TestClient(app) as client:
+        yield client
     app.dependency_overrides.clear()
 
 
@@ -97,18 +99,23 @@ def test_list_runs_empty(test_client):
     assert data["total"] == 0
 
 
-def test_list_rules_with_data(test_client, test_session):
+def test_list_rules_with_data(test_client, test_engine):
     """Test listing rules with sample data"""
-    # Add test rule
-    rule = Rule(
-        rule_code="TEST_RULE",
-        name="Test Rule",
-        category="test",
-        default_severity="high",
-        config={}
-    )
-    test_session.add(rule)
-    test_session.commit()
+    # Add test rule to the test database
+    Session = sessionmaker(bind=test_engine)
+    session = Session()
+    try:
+        rule = Rule(
+            rule_code="TEST_RULE",
+            name="Test Rule",
+            category="test",
+            default_severity="high",
+            config={}
+        )
+        session.add(rule)
+        session.commit()
+    finally:
+        session.close()
     
     response = test_client.get("/api/rules")
     assert response.status_code == 200

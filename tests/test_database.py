@@ -109,6 +109,7 @@ def test_issue_model(test_session):
         title="Test Issue",
         description="This is a test issue",
         state=IssueState.OPEN,
+        provenance=["rule"],
         first_seen_run_id=run.id,
         last_seen_run_id=run.id
     )
