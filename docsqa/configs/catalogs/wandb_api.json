@@ -1,0 +1,72 @@
+{
+  "wandb.init": {
+    "description": "Initialize a new W&B run",
+    "parameters": ["project", "config", "name", "tags", "notes", "group", "job_type", "id", "resume", "reinit", "mode", "anonymous", "entity", "dir", "sync_tensorboard", "monitor_gym", "save_code", "settings"],
+    "returns": "Run object",
+    "since_version": "0.8.0",
+    "deprecated": false,
+    "examples": ["wandb.init(project='my-project')", "wandb.init(project='test', config={'lr': 0.01})"]
+  },
+  "wandb.log": {
+    "description": "Log metrics and other data",
+    "parameters": ["data", "step", "commit"],
+    "returns": "None",
+    "since_version": "0.8.0",
+    "deprecated": false,
+    "examples": ["wandb.log({'accuracy': 0.9})", "wandb.log({'loss': 0.2}, step=100)"]
+  },
+  "wandb.finish": {
+    "description": "Mark a run as finished",
+    "parameters": ["exit_code", "quiet"],
+    "returns": "None",
+    "since_version": "0.8.0",
+    "deprecated": false,
+    "examples": ["wandb.finish()", "wandb.finish(exit_code=0)"]
+  },
+  "wandb.save": {
+    "description": "Save files to W&B",
+    "parameters": ["glob_str", "base_path", "policy"],
+    "returns": "list of saved file paths",
+    "since_version": "0.8.0",
+    "deprecated": false,
+    "examples": ["wandb.save('model.h5')", "wandb.save('*.png')"]
+  },
+  "wandb.config": {
+    "description": "Configuration object for the current run",
+    "type": "property",
+    "since_version": "0.8.0",
+    "deprecated": false,
+    "examples": ["wandb.config.learning_rate = 0.01", "wandb.config.update({'epochs': 100})"]
+  },
+  "wandb.run": {
+    "description": "Current run object",
+    "type": "property",
+    "since_version": "0.8.0",
+    "deprecated": false,
+    "examples": ["wandb.run.name", "wandb.run.id", "wandb.run.url"]
+  },
+  "wandb.Artifact": {
+    "description": "Create an artifact for dataset or model versioning",
+    "parameters": ["name", "type", "description", "metadata"],
+    "returns": "Artifact object",
+    "since_version": "0.10.0",
+    "deprecated": false,
+    "examples": ["wandb.Artifact('dataset', type='dataset')", "artifact = wandb.Artifact('model', type='model')"]
+  },
+  "wandb.Image": {
+    "description": "Log images to W&B",
+    "parameters": ["data_or_path", "mode", "caption", "grouping", "classes", "boxes", "masks"],
+    "returns": "Image object",
+    "since_version": "0.8.0",
+    "deprecated": false,
+    "examples": ["wandb.log({'image': wandb.Image('path/to/image.png')})", "wandb.Image(image_array, caption='My image')"]
+  },
+  "wandb.Table": {
+    "description": "Log structured data as tables",
+    "parameters": ["columns", "data", "dataframe", "allow_mixed_types", "optional"],
+    "returns": "Table object",
+    "since_version": "0.10.0",
+    "deprecated": false,
+    "examples": ["wandb.Table(columns=['x', 'y'], data=[[1, 2], [3, 4]])", "wandb.Table(dataframe=df)"]
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "wandb login": {
+    "description": "Authenticate with W&B",
+    "parameters": ["--relogin", "--anonymously", "--cloud", "--host"],
+    "since_version": "0.8.0",
+    "deprecated": false,
+    "examples": ["wandb login", "wandb login --relogin"]
+  },
+  "wandb init": {
+    "description": "Initialize a new project",
+    "parameters": ["--project", "--entity", "--reset"],
+    "since_version": "0.8.0",
+    "deprecated": false,
+    "examples": ["wandb init", "wandb init --project my-project"]
+  },
+  "wandb run": {
+    "description": "Run a command and track it with W&B",
+    "parameters": ["--name", "--project", "--entity", "--group", "--job-type", "--tags", "--notes", "--config", "--config-file"],
+    "since_version": "0.8.0",
+    "deprecated": false,
+    "examples": ["wandb run python train.py", "wandb run --name experiment1 python train.py"]
+  },
+  "wandb sweep": {
+    "description": "Create a hyperparameter sweep",
+    "parameters": ["--project", "--entity", "--name", "--count"],
+    "since_version": "0.8.21",
+    "deprecated": false,
+    "examples": ["wandb sweep sweep.yaml", "wandb sweep --project my-project sweep.yaml"]
+  },
+  "wandb agent": {
+    "description": "Run a sweep agent",
+    "parameters": ["--count", "--project", "--entity"],
+    "since_version": "0.8.21",
+    "deprecated": false,
+    "examples": ["wandb agent sweep_id", "wandb agent --count 10 sweep_id"]
+  },
+  "wandb sync": {
+    "description": "Sync offline runs to W&B",
+    "parameters": ["--project", "--entity", "--id", "--include-offline", "--exclude-offline", "--mark-preempting", "--sync-tensorboard", "--clean", "--clean-old-hours", "--clean-force"],
+    "since_version": "0.9.0",
+    "deprecated": false,
+    "examples": ["wandb sync wandb/offline-*", "wandb sync --clean"]
+  },
+  "wandb offline": {
+    "description": "Disable W&B syncing",
+    "parameters": [],
+    "since_version": "0.8.0",
+    "deprecated": false,
+    "examples": ["wandb offline"]
+  },
+  "wandb online": {
+    "description": "Enable W&B syncing",
+    "parameters": [],
+    "since_version": "0.8.0",
+    "deprecated": false,
+    "examples": ["wandb online"]
+  },
+  "wandb artifact": {
+    "description": "Manage artifacts",
+    "subcommands": ["get", "put", "ls", "cache"],
+    "since_version": "0.10.0",
+    "deprecated": false,
+    "examples": ["wandb artifact get entity/project/artifact:version", "wandb artifact put my-dataset.csv"]
+  },
+  "wandb launch": {
+    "description": "Launch jobs on compute infrastructure",
+    "parameters": ["--project", "--entity", "--queue", "--resource", "--resource-args", "--config", "--dockerfile", "--entry-point"],
+    "since_version": "0.13.0",
+    "deprecated": false,
+    "examples": ["wandb launch --queue my-queue", "wandb launch -q my-queue -c config.yaml"]
+  }
+}
