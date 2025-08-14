@@ -62,4 +62,4 @@ server:
   port: 8080
 
 db:
-  url: postgresql+psycopg://user:pass@db:5432/docsqa
+  url: sqlite:///dev.db
