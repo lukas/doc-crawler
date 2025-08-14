@@ -61,6 +61,12 @@ export DATABASE_URL=${DATABASE_URL:-"sqlite:///dev.db"}
 
 echo "🗃️  Setting up database..."
 
+# Determine which Python to use
+PYTHON_CMD="python3"
+if [ -f ".venv/bin/python" ]; then
+    PYTHON_CMD=".venv/bin/python"
+fi
+
 # Initialize database
 $PYTHON_CMD -c "
 import sys
@@ -72,7 +78,6 @@ print('✅ Database initialized')
 
 echo "🛠️  Seeding default rules..."
 # Seed rules
-cd docsqa
 $PYTHON_CMD -c "
 import sys
 sys.path.insert(0, 'backend')
@@ -113,7 +118,6 @@ with db.get_session() as session:
 
 print(f'✅ Seeded {created_count} default rules')
 "
-cd ..
 
 echo "📂 Creating sample file records..."
 cd docsqa
