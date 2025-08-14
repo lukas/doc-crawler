@@ -1,11 +1,11 @@
 import asyncio
 import logging
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
 
-from ...core.linkcheck import LinkChecker, extract_urls_from_text
-from ...core.mdx_parse import MDXDocument
-from ...core.schemas import IssueCreate, IssueSeverity
+from core.linkcheck import LinkChecker, extract_urls_from_text
+from core.mdx_parse import MDXDocument
+from core.schemas import IssueCreate, IssueSeverity
 
 logger = logging.getLogger(__name__)
 

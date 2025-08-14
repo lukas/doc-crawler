@@ -1,9 +1,9 @@
 import re
 import logging
 from typing import List, Dict, Any, Optional, Set
-from ...core.mdx_parse import MDXDocument
-from ...core.schemas import IssueCreate, IssueSeverity
-from ...core.catalogs import catalog_loader
+from core.mdx_parse import MDXDocument
+from core.schemas import IssueCreate, IssueSeverity
+from core.catalogs import catalog_loader
 
 logger = logging.getLogger(__name__)
 

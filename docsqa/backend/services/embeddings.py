@@ -113,7 +113,7 @@ class EmbeddingService:
         except Exception as e:
             logger.error(f"Error saving index: {e}")
     
-    async def create_embedding(self, text: str) -> np.ndarray:
+    async def create_embedding(self, text: str) -> NDArray:
         """Create embedding for text using OpenAI API"""
         try:
             response = await self.client.embeddings.create(

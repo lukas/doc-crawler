@@ -1,9 +1,9 @@
 import logging
 from typing import List, Dict, Any, Optional
-from ...core.version_resolver import VersionResolver
-from ...core.mdx_parse import MDXDocument
-from ...core.schemas import IssueCreate, IssueSeverity
-from ...core.patches import create_unified_diff
+from core.version_resolver import VersionResolver
+from core.mdx_parse import MDXDocument
+from core.schemas import IssueCreate, IssueSeverity
+from core.patches import create_unified_diff
 
 logger = logging.getLogger(__name__)
 

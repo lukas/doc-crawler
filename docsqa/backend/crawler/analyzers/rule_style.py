@@ -1,9 +1,9 @@
 import re
 import logging
 from typing import List, Dict, Any, Optional, Set
-from ...core.mdx_parse import MDXDocument
-from ...core.schemas import IssueCreate, IssueSeverity
-from ...core.patches import create_line_replacement_patch
+from core.mdx_parse import MDXDocument
+from core.schemas import IssueCreate, IssueSeverity
+from core.patches import create_line_replacement_patch
 
 logger = logging.getLogger(__name__)
 
