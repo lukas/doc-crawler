@@ -15,38 +15,33 @@ A comprehensive system for automatically detecting and fixing issues in W&B docu
 
 ### Development Setup
 
-1. **Initial setup**:
+1. **One-time setup**:
 ```bash
-# Set up virtual environment and dependencies
-./scripts/setup.sh
+# Run the setup script (installs dependencies, sets up database)
+./setup.sh
 
-# Set environment variables
+# Set environment variables (optional)
 export OPENAI_API_KEY="your-openai-key"
-export DATABASE_URL="sqlite:///dev.db"  # or PostgreSQL for production
-
-# Seed development database
-./scripts/dev_seed.sh
+export GITHUB_APP_ID="your-github-app-id"
 ```
 
 2. **Start the API server**:
 ```bash
-# Activate virtual environment (if not already active)
-source .venv/bin/activate
-
-# Start server
-cd backend && python app.py
+cd docsqa/backend && python app.py
 ```
 
 3. **Run analysis**:
 ```bash
-# Run full analysis (requires OpenAI API key)
-./scripts/run_once.sh
+cd docsqa
 
-# Run without LLM (rule-based only)
-./scripts/run_once.sh --no-llm
+# Run full analysis (requires OpenAI API key)
+python -m crawler.run_analysis --source manual
+
+# Run without LLM (rule-based only)  
+python -m crawler.run_analysis --source manual --no-llm
 
 # Debug mode
-./scripts/run_once.sh --debug
+python -m crawler.run_analysis --source manual --debug
 ```
 
 4. **View results**:
