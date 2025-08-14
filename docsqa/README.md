@@ -27,21 +27,26 @@ export GITHUB_APP_ID="your-github-app-id"
 
 2. **Start the API server**:
 ```bash
+# Activate the virtual environment
+source docsqa/.venv/bin/activate
+
+# Start server
 cd docsqa/backend && python app.py
 ```
 
 3. **Run analysis**:
 ```bash
-cd docsqa
+# Activate virtual environment (if not already active)
+source docsqa/.venv/bin/activate
 
 # Run full analysis (requires OpenAI API key)
-python -m crawler.run_analysis --source manual
+cd docsqa && python -m crawler.run_analysis --source manual
 
 # Run without LLM (rule-based only)  
-python -m crawler.run_analysis --source manual --no-llm
+cd docsqa && python -m crawler.run_analysis --source manual --no-llm
 
 # Debug mode
-python -m crawler.run_analysis --source manual --debug
+cd docsqa && python -m crawler.run_analysis --source manual --debug
 ```
 
 4. **View results**:

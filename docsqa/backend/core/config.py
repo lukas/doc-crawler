@@ -104,7 +104,7 @@ class Config(BaseModel):
 
 class Settings:
     def __init__(self, config_path: Optional[str] = None):
-        self.config_path = config_path or os.getenv("CONFIG_PATH", "configs/config.yml")
+        self.config_path = config_path or os.getenv("CONFIG_PATH", "../configs/config.yml")
         self._config: Optional[Config] = None
         self._load_config()
     
