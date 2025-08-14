@@ -23,18 +23,16 @@ More content here.
     doc = parse_mdx_file("test.md", content)
     
     assert isinstance(doc, MDXDocument)
-    assert doc.file_path == "test.md"
-    assert doc.title == "Test Document"
-    assert len(doc.sections) >= 2
+    assert doc.filepath == "test.md"
+    assert doc.get_title() == "Test Document"
+    assert len(doc.headings) >= 2
     
-    # Check sections
-    section1 = next((s for s in doc.sections if s.heading == "Section 1"), None)
+    # Check headings
+    section1 = next((h for h in doc.headings if h.content == "Section 1"), None)
     assert section1 is not None
-    assert "Some content here." in section1.content
     
-    section2 = next((s for s in doc.sections if s.heading == "Section 2"), None)
+    section2 = next((h for h in doc.headings if h.content == "Section 2"), None) 
     assert section2 is not None
-    assert "More content here." in section2.content
 
 
 def test_parse_frontmatter():
@@ -52,9 +50,9 @@ Content goes here.
     
     doc = parse_mdx_file("test.md", content)
     
-    assert doc.title == "Custom Title"  # Should use frontmatter title
-    assert doc.metadata["author"] == "Test Author"
-    assert doc.metadata["tags"] == ["test", "markdown"]
+    assert doc.get_title() == "Custom Title"  # Should use frontmatter title
+    assert doc.frontmatter_data["author"] == "Test Author"
+    assert doc.frontmatter_data["tags"] == ["test", "markdown"]
 
 
 def test_parse_code_blocks():
@@ -79,11 +77,16 @@ function hello() {
     
     doc = parse_mdx_file("test.md", content)
     
-    # Code blocks should be preserved in content
-    assert "```python" in doc.content
-    assert "```javascript" in doc.content
-    assert "def hello():" in doc.content
-    assert "function hello()" in doc.content
+    # Code blocks should be parsed and available
+    assert len(doc.code_blocks) >= 2
+    
+    python_block = next((cb for cb in doc.code_blocks if cb.attributes.get("language") == "python"), None)
+    assert python_block is not None
+    assert "def hello():" in python_block.content
+    
+    js_block = next((cb for cb in doc.code_blocks if cb.attributes.get("language") == "javascript"), None) 
+    assert js_block is not None
+    assert "function hello()" in js_block.content
 
 
 def test_parse_links():
