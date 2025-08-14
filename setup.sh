@@ -68,6 +68,7 @@ if [ -f ".venv/bin/python" ]; then
 fi
 
 # Initialize database
+cd docsqa
 $PYTHON_CMD -c "
 import sys
 sys.path.insert(0, 'backend')
@@ -75,6 +76,7 @@ from core.db import init_db
 init_db()
 print('✅ Database initialized')
 "
+cd ..
 
 echo "🛠️  Seeding default rules..."
 # Seed rules

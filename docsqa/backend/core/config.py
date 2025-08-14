@@ -104,13 +104,32 @@ class Config(BaseModel):
 
 class Settings:
     def __init__(self, config_path: Optional[str] = None):
-        self.config_path = config_path or os.getenv("CONFIG_PATH", "../configs/config.yml")
+        self.config_path = config_path or os.getenv("CONFIG_PATH")
         self._config: Optional[Config] = None
         self._load_config()
     
     def _load_config(self):
         """Load configuration from YAML file and environment variables"""
-        config_file = Path(self.config_path)
+        if self.config_path:
+            config_file = Path(self.config_path)
+        else:
+            # Try multiple possible locations
+            possible_paths = [
+                "configs/config.yml",  # From root
+                "../configs/config.yml",  # From backend
+                "../../configs/config.yml",  # From deeper nesting
+                Path(__file__).parent.parent.parent / "configs" / "config.yml"  # Absolute from this file
+            ]
+            
+            config_file = None
+            for path in possible_paths:
+                test_path = Path(path)
+                if test_path.exists():
+                    config_file = test_path
+                    break
+            
+            if config_file is None:
+                raise FileNotFoundError(f"Configuration file not found in any of these locations: {possible_paths}")
         
         if not config_file.exists():
             raise FileNotFoundError(f"Configuration file not found: {self.config_path}")
