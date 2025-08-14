@@ -30,9 +30,12 @@ def test_session(test_engine):
     session.close()
 
 
-@pytest.fixture
+@pytest.fixture 
 def test_client(test_engine):
     """Create test client with test database"""
+    # Create app without lifespan to avoid init_db
+    app = create_app(with_lifespan=False)
+    
     def get_test_db():
         Session = sessionmaker(bind=test_engine)
         session = Session()
@@ -41,17 +44,12 @@ def test_client(test_engine):
         finally:
             session.close()
     
-    # Set test database URL to ensure isolation
-    os.environ["DATABASE_URL"] = "sqlite:///:memory:"
-    app = create_app(with_lifespan=False)
     app.dependency_overrides[get_db] = get_test_db
     
     with TestClient(app) as client:
         yield client
     
     app.dependency_overrides.clear()
-    if "DATABASE_URL" in os.environ:
-        del os.environ["DATABASE_URL"]
 
 
 def test_health_endpoint(test_client):
@@ -81,11 +79,22 @@ def test_list_issues_empty(test_client):
     assert data["total"] == 0
 
 
-def test_list_rules_empty(test_client):
+def test_list_rules_empty(test_client, test_engine):
     """Test listing rules when none exist"""
+    # Debug: check test database directly
+    Session = sessionmaker(bind=test_engine)
+    session = Session()
+    try:
+        from docsqa.backend.core.models import Rule
+        rules_in_test_db = session.query(Rule).all()
+        print(f"DEBUG: Test DB has {len(rules_in_test_db)} rules")
+    finally:
+        session.close()
+    
     response = test_client.get("/api/rules")
     assert response.status_code == 200
     data = response.json()
+    print(f"DEBUG: API returned {len(data)} rules")
     assert data == []
 
 
