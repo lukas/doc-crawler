@@ -1,15 +1,14 @@
-# DocsQA - W&B Documentation Quality Assurance System
+# DocsQA - Documentation Quality Assurance System
 
-A comprehensive system for automatically detecting and fixing issues in W&B documentation using rule-based analyzers and LLM-powered suggestions.
+A Python-based system that automatically scans W&B documentation for issues like typos, grammar errors, broken links, and outdated content, then proposes fixes via AI-powered suggestions.
 
-## Features
+## Key Features
 
-- **Multi-analyzer Pipeline**: Links, versions, API/CLI validation, style consistency
-- **LLM Integration**: GPT-4 powered clarity, grammar, and accuracy improvements  
-- **Smart Verification**: Automated safety checks for suggested patches
-- **GitHub Integration**: Automated PR creation with reviewed fixes
-- **Embeddings Search**: FAISS-powered document similarity for context
-- **Comprehensive API**: Full REST API for issue management and workflow
+- **Multi-analyzer Pipeline**: Detects broken links, outdated versions, deprecated APIs, style issues
+- **LLM-Powered Improvements**: Uses GPT-4 for clarity, grammar, and accuracy suggestions with citations
+- **Automated PR Creation**: Creates GitHub PRs with verified fixes for review
+- **Safety Guardrails**: Validates patches before auto-applying changes
+- **REST API**: Full FastAPI backend with issue management and workflow controls
 
 ## Quick Start
 
@@ -20,7 +19,7 @@ A comprehensive system for automatically detecting and fixing issues in W&B docu
 # Run the setup script (installs uv, dependencies, sets up database)
 ./setup.sh
 
-# Set environment variables (optional)
+# Set environment variables (optional for LLM features)
 export OPENAI_API_KEY="your-openai-key"
 export GITHUB_APP_ID="your-github-app-id"
 ```
@@ -30,29 +29,27 @@ export GITHUB_APP_ID="your-github-app-id"
 # Using uv (recommended)
 uv run docsqa-server
 
-# Or manually
-source .venv/bin/activate && cd docsqa/backend && python app.py
+# Server will be available at:
+# - API docs: http://localhost:8080/docs
+# - Health check: http://localhost:8080/health
 ```
 
 3. **Run analysis**:
 ```bash
-# Using uv (recommended)
+# Rule-based analysis only (no LLM required)
 uv run docsqa-analyze --source manual --no-llm
 
-# Run full analysis (requires OpenAI API key)
+# Full analysis with LLM improvements (requires OPENAI_API_KEY)
 uv run docsqa-analyze --source manual
 
 # Debug mode
 uv run docsqa-analyze --source manual --debug
-
-# Or manually
-source .venv/bin/activate
-cd docsqa && PYTHONPATH=backend python -m crawler.run_analysis --source manual
 ```
 
-4. **View results**:
-- API docs: http://localhost:8080/docs
-- Health check: http://localhost:8080/health
+4. **Run tests**:
+```bash
+uv run pytest
+```
 
 ### Docker Deployment
 
@@ -69,12 +66,12 @@ EOF
 
 2. **Start services**:
 ```bash
-docker-compose -f docker/docker-compose.yml up -d
+docker-compose -f docsqa/docker/docker-compose.yml up -d
 ```
 
 ## Configuration
 
-Main configuration in `configs/config.yml`:
+Main configuration in `docsqa/configs/config.yml`:
 
 ```yaml
 repo:
@@ -230,10 +227,13 @@ docsqa/
 │   ├── core/             # Core services & models
 │   ├── crawler/          # Analysis pipeline
 │   │   └── analyzers/    # Rule-based analyzers
+│   ├── migrations/       # Database migrations
 │   └── services/         # LLM, embeddings, GitHub
 ├── configs/              # Configuration & catalogs
+│   ├── catalogs/         # API/CLI validation data
+│   └── dictionaries/     # Terminology lists
 ├── docker/               # Docker setup
-└── scripts/              # Development utilities
+tests/                    # Test suite
 ```
 
 ### Adding New Rules
