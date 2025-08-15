@@ -2,7 +2,7 @@
 name = "docsqa"
 version = "1.0.0"
 description = "W&B Documentation Quality Assurance System - Comprehensive tool for automated documentation analysis, issue detection, and PR generation with LLM-powered suggestions"
-readme = "docsqa/README.md"
+readme = "README.md"
 license = { file = "LICENSE" }
 authors = [
     { name = "DocsQA Contributors" }
