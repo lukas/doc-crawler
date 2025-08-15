@@ -246,11 +246,14 @@ tests/                    # Test suite
 ### Testing
 
 ```bash
-# Unit tests
-pytest backend/tests/
+# Run all tests
+uv run pytest
 
-# Integration test with mini-repo
-python scripts/test_e2e.py
+# Run with coverage
+uv run pytest --cov=docsqa
+
+# Run specific test file
+uv run pytest tests/test_api.py
 ```
 
 ## Acceptance Tests
